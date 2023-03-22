@@ -20,12 +20,16 @@ func main() {
 	cmd := exec.Command(command, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Run()
-	// output, err := cmd.Output()
-	// if err != nil {
-	// 	fmt.Printf("Err: %v", err)
-	// 	os.Exit(1)
-	// }
+	cmd.Start()
 
-	// fmt.Println(string(output))
+	err := cmd.Wait()
+	// check if child process exited
+	if err != nil {
+		// check error type
+		processState, ok := err.(*exec.ExitError)
+		if ok {
+			os.Exit(processState.ExitCode())
+		}
+	}
+
 }
